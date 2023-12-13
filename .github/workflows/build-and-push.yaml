@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: CI
 
 on:
   push:
@@ -6,28 +6,17 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
+    - name: Build and Push Docker Image
+      env:
+        TIMESTAMP: ${{ github.event.head_commit.timestamp }}
       run: |
-        IMAGE_NAME=nandinichatterjee/myplugin2
-        TAG=$(date +"%Y-%m-%d-%H%M%S")
-
-        docker buildx create --use
-        docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest .
-        docker push $IMAGE_NAME:$TAG
-        docker push $IMAGE_NAME:latest
+        docker build -t myplugin .
+        docker tag myplugin:latest nandinichatterjee/myplugin2:${{ env.TIMESTAMP }}
+        docker push nandinichatterjee/myplugin2:${{ env.TIMESTAMP }}
