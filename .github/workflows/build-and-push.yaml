@@ -17,6 +17,6 @@ jobs:
       env:
         TIMESTAMP: ${{ github.event.head_commit.timestamp }}
       run: |
-        docker build -t myplugin .
+        docker build -t myplugin2 .
         docker tag myplugin2:${{ env.TIMESTAMP }} nandinichatterjee/myplugin2:${{ env.TIMESTAMP }}
         docker push nandinichatterjee/myplugin2:${{ env.TIMESTAMP }}
